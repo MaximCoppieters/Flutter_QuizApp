@@ -2,22 +2,25 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:programming_quiz/Model/courses.dart';
+import 'package:programming_quiz/Model/progression.dart';
 import 'package:programming_quiz/Model/questions.dart';
 import 'package:programming_quiz/Model/settings.dart';
 
 class QuestionReader {
   Questions _questions;
   Questions get questions => _questions;
-  SettingsModel userSettings;
+  SettingsModel _userSettings;
+  ProgressionModel _progression;
+
   static QuestionReader _instance;
 
-  QuestionReader._internal(this.userSettings) {
+  QuestionReader._internal(this._userSettings, this._progression) {
     _questions = Questions();
   }
 
-  factory QuestionReader(SettingsModel settings) {
+  factory QuestionReader(SettingsModel settings, ProgressionModel progression) {
     if (_instance == null) {
-      return QuestionReader._internal(settings);
+      return QuestionReader._internal(settings, progression);
     }
     return _instance;
   }
@@ -41,8 +44,8 @@ class QuestionReader {
     List<String> dataSeparated = questionLine.split(',');
 
     bool isMultipleChoice = dataSeparated[0] == "m";
-    if ((isMultipleChoice && userSettings.singleChoiceOnlyEnabled)
-      || (!isMultipleChoice && userSettings.multiChoiceOnlyEnabled)) {
+    if ((isMultipleChoice && _userSettings.singleChoiceOnlyEnabled)
+      || (!isMultipleChoice && _userSettings.multiChoiceOnlyEnabled)) {
       return;
     }
 

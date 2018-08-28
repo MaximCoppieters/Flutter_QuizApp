@@ -15,12 +15,14 @@ import 'package:scoped_model/scoped_model.dart';
 class NavigationHelper {
   static void openQuizWithQuestionsFromFile(Course course, BuildContext context,
       SettingsModel settings, ProgressionModel progression) async {
-    QuestionReader questionReader = QuestionReader(settings);
-    await questionReader.readQuestionsFromFile(course.csvPath);
-    Questions _questions = questionReader.questions;
 
     String nickname = settings.userSettings.getString("nickname");
     await progression.getPlayerInfo(nickname);
+
+    QuestionReader questionReader = QuestionReader(settings, progression);
+    await questionReader.readQuestionsFromFile(course.csvPath);
+    Questions _questions = questionReader.questions;
+
     progression.setQuestionCount(_questions.count, course);
 
     NavigationHelper._goToQuizPage(context, course, _questions);
