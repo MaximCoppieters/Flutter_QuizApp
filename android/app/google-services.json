@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "132625302394",
+    "firebase_url": "https://pxl-it-quiz.firebaseio.com",
+    "project_id": "pxl-it-quiz",
+    "storage_bucket": "pxl-it-quiz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132625302394:android:24a57031cad681e0",
+        "android_client_info": {
+          "package_name": "be.pxl.programmingquiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "132625302394-dlu9f7kuo9d4v1h0acnujb0e1gbom5gc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD01jVQuRvUWU7-mzdGwEaAurqcIeAhARs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
