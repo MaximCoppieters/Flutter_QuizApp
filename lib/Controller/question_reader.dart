@@ -7,16 +7,14 @@ import 'package:programming_quiz/Model/questions.dart';
 import 'package:programming_quiz/Model/settings.dart';
 
 class QuestionReader {
-  Questions _questions;
+  final Questions _questions;
   Questions get questions => _questions;
-  SettingsModel _userSettings;
-  ProgressionModel _progression;
+  final SettingsModel _userSettings;
+  final ProgressionModel _progression;
 
   static QuestionReader _instance;
 
-  QuestionReader._internal(this._userSettings, this._progression) {
-    _questions = Questions();
-  }
+  QuestionReader._internal(this._userSettings, this._progression) : _questions = Questions();
 
   factory QuestionReader(SettingsModel settings, ProgressionModel progression) {
     if (_instance == null) {
@@ -25,17 +23,20 @@ class QuestionReader {
     return _instance;
   }
 
-  static Future<String> loadAsset(String path) async {
+  static Future<String> loadCsvAsset(String path) async {
     return await rootBundle.loadString(path);
   }
 
-  Future<Null> readQuestionsFromFile(String path) async {
-    String questionCSVFile = await loadAsset(path);
+  Future<Null> readCourseQuestions(Course course) async {
+    String questionCSVFile = await loadCsvAsset(course.csvPath);
 
     List<String> questionCSVLines = questionCSVFile.split("\n");
 
-    for (String questionCSVLine in questionCSVLines) {
-      _readQuestion(questionCSVLine);
+    _questions.totalAmountOfQuestions = questionCSVLines.length;
+    int indexLastQuestionAnswered = _progression.getIndexLastQuestionAnswered(course);
+
+    for (int i=indexLastQuestionAnswered; i < questionCSVLines.length; i++) {
+      _readQuestion(questionCSVLines[i]);
     }
   }
 

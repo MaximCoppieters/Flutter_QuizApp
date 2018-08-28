@@ -98,8 +98,7 @@ class QuizViewState extends State<QuizView> {
                                           child: Container(
                                               margin: EdgeInsets.only(
                                                   left: 70.0, right: 15.0),
-                                              child: NextButton(
-                                                  courseModel))),
+                                              child: NextButton(courseModel))),
                                     ],
                                   ),
                                 ],
@@ -154,12 +153,7 @@ class NextButton extends StatelessWidget {
       builder: (context, child, question) => _questionAnsweredAlready(question)
           ? RaisedButton(
               onPressed: () {
-                (Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScopedModel<CourseModel>(
-                            model: CourseModel(_courseModel.course),
-                            child: QuizView()))));
+                NavigationHelper.goToQuizPage(context, _courseModel.course);
               },
               color: Colors.green,
               child: Row(
@@ -188,20 +182,24 @@ class CheckAnswerButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<ProgressionModel>(
         builder: (context, child, progression) =>
-            (ScopedModelDescendant<Question>(
-                builder: (context, child, question) =>
-                    !_questionAnsweredAlready(question)
-                        ? RaisedButton(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 16.0, horizontal: 15.0),
-                            child: TextTitle(text: "Check Answer"),
-                            color: Colors.teal,
-                            onPressed: () {
-                              question.checkAnswer(progression, _courseModel);
-                              NavigationHelper.showAnswerAnimation(context, question);
-                            },
-                          )
-                        : Container())));
+            (ScopedModelDescendant<SettingsModel>(
+              builder: (context, child, settings) =>
+                  ScopedModelDescendant<Question>(
+                      builder: (context, child, question) =>
+                          !_questionAnsweredAlready(question)
+                              ? RaisedButton(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 16.0, horizontal: 15.0),
+                                  child: TextTitle(text: "Check Answer"),
+                                  color: Colors.teal,
+                                  onPressed: () {
+                                    Questions.evaluateAnswerAndUpdateProgression(question, progression, _courseModel, settings);
+                                    NavigationHelper.showAnswerAnimation(
+                                        context, question);
+                                  },
+                                )
+                              : Container()),
+            )));
   }
 }
 

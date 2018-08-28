@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:programming_quiz/Model/courses.dart';
 import 'package:programming_quiz/Model/progression.dart';
+import 'package:programming_quiz/Model/settings.dart';
 import 'package:quiver/async.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:collection/collection.dart';
@@ -44,7 +45,8 @@ abstract class Question extends Model {
 
   void setTimer() {
     _timeRemaining = 30;
-    _timer = Timer(Duration(seconds: _timeRemaining+1), () => _questionAnsweredCorrectly = false);
+    _timer = Timer(Duration(seconds: _timeRemaining + 1),
+        () => _questionAnsweredCorrectly = false);
   }
 }
 
@@ -72,7 +74,7 @@ class MultipleChoiceQuestion extends Question {
     _questionAnsweredCorrectly =
         ListEquality().equals(_correctAnswerIndices, _selectedIndices);
 
-    if(_questionAnsweredCorrectly) {
+    if (_questionAnsweredCorrectly) {
       progression.incrementCorrectAnswers(courseModel.course);
     } else {
       progression.incrementWrongAnswers(courseModel.course);
@@ -109,7 +111,6 @@ class SingleChoiceQuestion extends Question {
     _secondsTimer?.cancel();
 
     _questionAnsweredCorrectly = _rightAnswerIndex == _selectedIndex;
-    print(progression);
 
     if (_questionAnsweredCorrectly) {
       progression.incrementCorrectAnswers(courseModel.course);
@@ -125,9 +126,9 @@ class Questions {
   List<Question> _questions;
   List<Question> get list => _questions;
   int _index = 0;
+  int totalAmountOfQuestions;
 
   int get questionNumber => _index;
-  int get count => _questions.length;
 
   Questions() : _questions = [];
 
@@ -135,12 +136,30 @@ class Questions {
     _questions.add(question);
   }
 
-
   Question getNext() {
     if (_index >= _questions.length) {
       return null;
     }
     return _questions[_index++];
+  }
+
+  static void evaluateAnswerAndUpdateProgression(
+      Question question,
+      ProgressionModel progression,
+      CourseModel course,
+      SettingsModel settings) {
+    question.checkAnswer(progression, course);
+    double points;
+    if (question.questionAnsweredCorrectly) {
+      if (settings.timeModeEnabled) {
+        points = 2 + question.timeRemaining / 10;
+      } else {
+        points = 2.0;
+      }
+    } else {
+      points = -1.0;
+    }
+    progression.increaseTotalPoints(points);
   }
 
   bool hasNext() => _questions[++_index] != null;

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:programming_quiz/Model/questions.dart';

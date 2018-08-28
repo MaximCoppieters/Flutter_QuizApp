@@ -32,7 +32,9 @@ class HomePage extends StatelessWidget {
                               accentColor: Colors.pinkAccent,
                             ),
                             LargeButton(
-                                onPress: () {},
+                                onPress: () {
+                                  NavigationHelper.goToLeaderboardPage(context);
+                                },
                                 text: "Leaderboard",
                                 buttonColor: Colors.orange,
                                 accentColor: Colors.orangeAccent),
@@ -85,8 +87,8 @@ bool _overlapsOtherIcons(Rectangle iconSpace, List<Rectangle> takenSpaces) {
 }
 
 class RandomTransformedPositionedIcon extends StatelessWidget {
-  static Random _rng = Random();
-  static List<IconData> _possibleIconData = [
+  static final Random _rng = Random();
+  static final List<IconData> _possibleIconData = [
     Icons.access_alarms,
     Icons.directions_bike,
     Icons.tag_faces,

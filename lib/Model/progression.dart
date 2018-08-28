@@ -30,6 +30,16 @@ class ProgressionModel extends Model {
     document.updateData(playerData);
   }
 
+  int getIndexLastQuestionAnswered(Course course) {
+    var courseData = playerData["courses"];
+
+    int indexCourse = _getCourseIndex(courseData, course);
+    int rightAnswers = playerData["courses"][indexCourse]["correct"];
+    int wrongAnswers = playerData["courses"][indexCourse]["wrong"];
+
+    return rightAnswers + wrongAnswers;
+  }
+
   void incrementCorrectAnswers(Course course) {
     _incrementField(course, "correct");
   }
@@ -45,6 +55,15 @@ class ProgressionModel extends Model {
     playerData["courses"][indexCourseToUpdate][field]++;
 
     document.updateData(playerData);
+  }
+
+  void increaseTotalPoints(double amount) {
+    playerData["points"] += amount;
+    document.updateData(playerData);
+  }
+
+  int getTotalPoints() {
+    return playerData["points"];
   }
 
   int _getCourseIndex(var courseData, course) {
