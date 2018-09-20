@@ -57,7 +57,7 @@ class ProgressionModel extends Model {
     document.updateData(playerData);
   }
 
-  void increaseTotalPoints(double amount) {
+  void increaseTotalPoints(num amount) {
     playerData["points"] += amount;
     document.updateData(playerData);
   }

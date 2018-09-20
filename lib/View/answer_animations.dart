@@ -67,7 +67,7 @@ class AnswerAnimationState extends State<AnswerAnimation>
       response = "CORRECT";
     } else {
       if (_question.timeRemaining == 0) {
-        response = "TIME'S UP";
+        response = "TIME'S UP\n";
       } else {
         response = "INCORRECT\n";
       }

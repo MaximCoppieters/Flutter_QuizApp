@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:programming_quiz/Model/courses.dart';
+import 'package:programming_quiz/Model/player.dart';
 
 class FirestoreHelper {
   static Firestore instance = Firestore.instance;
@@ -17,7 +18,7 @@ class FirestoreHelper {
   static String _createEmptyDocumentJson(String nickname) {
     StringBuffer documentStructure = StringBuffer();
 
-    documentStructure.write('{"nickname":"$nickname", "courses":[');
+    documentStructure.write('{"nickname":"$nickname", "points":0, "courses":[');
     for (int i = 0; i < Course.values.length; i++) {
       if (i == Course.values.length - 1) {
         documentStructure.write(
@@ -47,9 +48,44 @@ class FirestoreHelper {
     return documentSnapshot.data;
   }
 
-  static getPlayerCollection(String nickname) async {
+  static Query getPlayerCollection(String nickname) {
     return instance
         .collection("players")
         .where("nickname", isEqualTo: nickname);
+  }
+
+  static Stream<QuerySnapshot> getPlayerSnapshots(
+      String nickname) {
+      return getPlayerCollection(nickname)
+              .snapshots();
+  }
+
+  static Future<QuerySnapshot> _getSnapshotTopTenPlayers() {
+    return instance
+        .collection("players")
+        .orderBy("points", descending: true)
+        .limit(10)
+        .getDocuments();
+  }
+
+  static Future<List<DocumentSnapshot>> _getTopTenPlayerDocuments() async {
+    QuerySnapshot topPlayerSnapshot = await _getSnapshotTopTenPlayers();
+    return topPlayerSnapshot.documents;
+  }
+
+  static Future<List<Player>> getTopTenPlayers() async {
+    List<DocumentSnapshot> topTenPlayerDocuments =
+        await _getTopTenPlayerDocuments();
+    List<Player> topTenPlayers = [];
+
+    for (int i = 0; i < topTenPlayerDocuments.length; i++) {
+      Map playerData = topTenPlayerDocuments[i].data;
+      String nickname = playerData["nickname"];
+      num points = playerData["points"];
+      Player currentPlayer = Player(nickname, points);
+      topTenPlayers.add(currentPlayer);
+    }
+
+    return topTenPlayers;
   }
 }

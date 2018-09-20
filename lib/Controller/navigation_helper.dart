@@ -15,7 +15,7 @@ class NavigationHelper {
   static void openQuizWithQuestionsFromFile(Course course, BuildContext context,
       SettingsModel settings, ProgressionModel progression) async {
 
-    String nickname = settings.userSettings.getString("nickname");
+    String nickname = settings.nickname;
     await progression.getPlayerInfo(nickname);
 
     QuestionReader questionReader = QuestionReader(settings, progression);

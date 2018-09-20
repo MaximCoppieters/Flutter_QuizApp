@@ -68,7 +68,7 @@ class DrawerSettingState extends State<DrawerSetting> {
               activeColor: Colors.green,
               value: settingsModel.getValue(setting),
               onChanged: (bool) {
-                settingsModel.toggleValue(setting);
+                settingsModel.toggleValue(setting, context);
               },
             ),
           ),
@@ -120,7 +120,7 @@ class TimerDisplayWidgetState extends State<TimerDisplayWidget> {
     return Container(
       width: 60.0,
       margin: EdgeInsets.only(right: 20.0, top: 3.0, bottom: 3.0),
-      child: Center(child: TextTitle(text: "${_question.timeRemaining}")),
+      child: Center(child: TextTitle(text: "${_question.timeRemaining}", color: Colors.white,)),
       foregroundDecoration: ShapeDecoration(
           shape:
               CircleBorder(side: BorderSide(width: 5.0, color: Colors.white))),
@@ -202,7 +202,7 @@ class ScreenTileButtonState extends State<ScreenTileButton> {
         child: ScopedModelDescendant<ProgressionModel>(
           builder: (context, child, progression) => RaisedButton(
             splashColor: course.accentColor,
-            color: course.mainColor[400],
+            color: !settings.lightThemeEnabled ? course.mainColor[400] : course.mainColor[900],
             shape: BeveledRectangleBorder(),
             onPressed: () {
               setState(() {

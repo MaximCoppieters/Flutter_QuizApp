@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
 }
 
 _saveNickname(String nickname, SettingsModel settings) async {
-  settings.userSettings.setString("nickname", nickname);
+  settings.nickname = nickname;
   FirestoreHelper.createEmptyPlayerDocument(nickname);
 
   print("Added $nickname locally");

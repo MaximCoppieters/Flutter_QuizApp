@@ -149,15 +149,15 @@ class Questions {
       CourseModel course,
       SettingsModel settings) {
     question.checkAnswer(progression, course);
-    double points;
+    int points;
     if (question.questionAnsweredCorrectly) {
       if (settings.timeModeEnabled) {
-        points = 2 + question.timeRemaining / 10;
+        points = 2 + (question.timeRemaining / 10.0).floor();
       } else {
-        points = 2.0;
+        points = 2;
       }
     } else {
-      points = -1.0;
+      points = -1;
     }
     progression.increaseTotalPoints(points);
   }

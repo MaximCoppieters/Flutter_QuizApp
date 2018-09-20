@@ -158,7 +158,7 @@ class NextButton extends StatelessWidget {
               color: Colors.green,
               child: Row(
                 children: <Widget>[
-                  TextTitle(text: "Next"),
+                  TextTitle(text: "Next", color: Colors.white),
                   Icon(
                     Icons.navigate_next,
                     color: Colors.white,
@@ -190,7 +190,7 @@ class CheckAnswerButton extends StatelessWidget {
                               ? RaisedButton(
                                   padding: EdgeInsets.symmetric(
                                       vertical: 16.0, horizontal: 15.0),
-                                  child: TextTitle(text: "Check Answer"),
+                                  child: TextTitle(text: "Check Answer", color: Colors.white,),
                                   color: Colors.teal,
                                   onPressed: () {
                                     Questions.evaluateAnswerAndUpdateProgression(question, progression, _courseModel, settings);

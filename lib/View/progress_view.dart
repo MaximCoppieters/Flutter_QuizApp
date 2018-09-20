@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:programming_quiz/Controller/firestore_helper.dart';
 import 'package:programming_quiz/Model/courses.dart';
+import 'package:programming_quiz/Model/settings.dart';
 import 'package:programming_quiz/View/utility_widgets.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProgressPage extends StatefulWidget {
   @override
@@ -17,22 +20,21 @@ class ProgressPageState extends State<ProgressPage> {
       appBar: AppBar(
         title: Text("Your Progression"),
       ),
-      body: StreamBuilder(
-        stream: Firestore.instance
-            .collection("players")
-            .where("nickname", isEqualTo: "Maxim")
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-              children:
-                  _generateProgressionContainers(snapshot.data.documents[0]),
-            );
-          } else {
-            return Text("waiting");
-          }
-        },
+      body: ScopedModelDescendant<SettingsModel>(
+        builder: (context, child, settingsModel) => StreamBuilder(
+          stream: FirestoreHelper.getPlayerSnapshots(settingsModel.nickname),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                children:
+                    _generateProgressionContainers(snapshot.data.documents[0]),
+              );
+            } else {
+              return Text("waiting");
+            }
+          },
+        ),
       ),
     );
   }

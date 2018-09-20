@@ -1,5 +1,5 @@
-import 'dart:async';
-
+import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,7 +23,11 @@ class SettingsModel extends Model {
   bool get singleChoiceOnlyEnabled => _singleChoiceOnlyEnabled;
   bool get multiChoiceOnlyEnabled => _multiChoiceOnlyEnabled;
   bool get skipIntro => _skipIntro;
-  SharedPreferences userSettings;
+
+  SharedPreferences _userSettings;
+  String get nickname => _userSettings.getString("nickname");
+
+  set nickname(nickname) => nickname ?? _userSettings.setString("nickname", nickname);
 
   static final _instance = SettingsModel._internal();
 
@@ -38,54 +42,55 @@ class SettingsModel extends Model {
 
   void _setSavedSettings() async {
     SharedPreferences.getInstance().then((settings) {
-      userSettings = settings;
-      _skipIntro = userSettings.getBool("skipIntro") ?? false;
-      _lightThemeEnabled = userSettings.getBool("lightTheme") ?? false;
-      _singleChoiceOnlyEnabled = userSettings.getBool("singleChoiceMode") ?? false;
-      _multiChoiceOnlyEnabled = userSettings.getBool("multiChoiceMode") ?? false;
-      _timeModeEnabled = userSettings.getBool("timeMode") ?? false;
+      _userSettings = settings;
+      _skipIntro = _userSettings.getBool("skipIntro") ?? false;
+      _lightThemeEnabled = _userSettings.getBool("lightTheme") ?? false;
+      _singleChoiceOnlyEnabled = _userSettings.getBool("singleChoiceMode") ?? false;
+      _multiChoiceOnlyEnabled = _userSettings.getBool("multiChoiceMode") ?? false;
+      _timeModeEnabled = _userSettings.getBool("timeMode") ?? false;
     });
   }
 
   set multiChoiceOnlyEnabled(bool value) {
     _multiChoiceOnlyEnabled = value;
+    _userSettings.setBool("multiChoiceMode", _multiChoiceOnlyEnabled);
     notifyListeners();
   }
 
   void toggleSkipIntro() {
     _skipIntro = !_skipIntro;
-    userSettings.setBool("skipIntro", _skipIntro);
+    _userSettings.setBool("skipIntro", _skipIntro);
     notifyListeners();
   }
 
   void toggleTimeMode() {
     _timeModeEnabled = !_timeModeEnabled;
-    userSettings.setBool("timeMode", _timeModeEnabled);
+    _userSettings.setBool("timeMode", _timeModeEnabled);
     notifyListeners();
   }
   void toggleSingleChoiceMode() {
     _singleChoiceOnlyEnabled = !_singleChoiceOnlyEnabled;
     if (_singleChoiceOnlyEnabled) {
       _multiChoiceOnlyEnabled = false;
-      userSettings.setBool("multiChoiceMode", false);
+      _userSettings.setBool("multiChoiceMode", false);
     }
-    userSettings.setBool("singleChoiceMode", _singleChoiceOnlyEnabled);
+    _userSettings.setBool("singleChoiceMode", _singleChoiceOnlyEnabled);
     notifyListeners();
   }
   void toggleMultipleChoiceMode() {
     _multiChoiceOnlyEnabled = !_multiChoiceOnlyEnabled;
     if (_multiChoiceOnlyEnabled) {
       _singleChoiceOnlyEnabled = false;
-      userSettings.setBool("singleChoiceMode", false);
+      _userSettings.setBool("singleChoiceMode", false);
     }
-    userSettings.setBool("multiChoiceMode", _multiChoiceOnlyEnabled);
+    _userSettings.setBool("multiChoiceMode", _multiChoiceOnlyEnabled);
     notifyListeners();
   }
 
-  void switchThemes() {
+  void switchThemes(BuildContext context) {
     _lightThemeEnabled = !_lightThemeEnabled;
-    userSettings.setBool("lightTheme", _lightThemeEnabled);
-    notifyListeners();
+    DynamicTheme.of(context).setThemeData(!_lightThemeEnabled ? ThemeData.light() : ThemeData.dark());
+    _userSettings.setBool("lightTheme", _lightThemeEnabled);
   }
 
   bool getValue(Settings setting) {
@@ -104,10 +109,10 @@ class SettingsModel extends Model {
     throw("No settings enum found for that setting");
   }
 
-  void toggleValue(Settings setting) {
+  void toggleValue(Settings setting, BuildContext build) {
     switch(setting) {
       case Settings.SWITCHTHEME:
-        switchThemes();
+        switchThemes(build);
         break;
       case Settings.MULTIPLECHOICEMODE:
         toggleMultipleChoiceMode();
